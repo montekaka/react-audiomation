@@ -4,6 +4,53 @@ import Sketch from 'react-p5'
 import p5 from "p5";
 import "p5/lib/addons/p5.sound";
 
+
+const drawWave = (p5, vol, volHistory, width, height, setVolHistory) => {
+  p5.angleMode(p5.RADIUS)
+  setVolHistory([...volHistory, vol])
+  p5.stroke('blue')
+  p5.strokeWeight(2)
+  p5.noFill();          
+  p5.beginShape();                  
+  for (var i = 0; i < volHistory.length; i++) {          
+    let y = p5.map(volHistory[i], 0, 1, height, 0)         
+    p5.vertex(i, y)
+  }          
+  p5.endShape();
+
+  if(volHistory.length > width) {
+    volHistory.splice(0, 1);
+    setVolHistory(volHistory)
+  }
+}
+
+const drawCircle = (p5, vol, volHistory, width, height, setVolHistory) => {
+  p5.angleMode(p5.DEGREES)
+  setVolHistory([...volHistory, vol])
+  p5.stroke('blue')
+  //p5.strokeWeight(0.1)
+  p5.noFill();
+  p5.translate(width/2, height/2);
+  
+  p5.beginShape();       
+  for (var i = 0; i < 360; i++) {          
+    // let y = p5.map(volHistory[i], 0, 1, height, 0)
+    // p5.vertex(i, y)
+    let r = p5.map(volHistory[i], 0, 1, Math.min(width, height) * 0.1, Math.min(width, height));
+
+    let x = r * p5.cos(i);
+    let y = r * p5.sin(i);
+    p5.vertex(x, y)
+  }          
+  p5.endShape();
+
+  if(volHistory.length > 360) {
+    volHistory.splice(0, 1);
+    setVolHistory(volHistory)
+  }
+}
+
+
 const AddFile = (props) => {
   const [buttonLabel, setButtonLabel] = useState('Add')
   const [playButtonLabel, setPlayButtonLabel] = useState('Pause')
@@ -54,32 +101,14 @@ const Box = (props) => {
   return (
     <Sketch 
       setup={(p5, canvasParentRef) => {
-        p5.createCanvas(props.width, props.height).parent(canvasParentRef)
+        p5.createCanvas(props.width, props.height).parent(canvasParentRef)        
       }}
       draw={(p5) => {
-        p5.background(0);        
-        // p5.point(0, props.height);        
+        p5.background(0);    
         if(Object.keys(props.amp).length > 0 && props.amp.getLevel() > 0) {
           let vol = props.amp.getLevel();          
-          props.setVolHistory([...props.volHistory, vol])            
-          p5.stroke('purple')
-          p5.strokeWeight(2)
-          p5.noFill();          
-          p5.beginShape();                  
-            for (var i = 0; i < props.volHistory.length; i++) {          
-              let y = p5.map(props.volHistory[i], 0, 1, props.height, 0)
-              // console.log(props.x + i, y)
-              // p5.point(i, y);            
-              p5.vertex(i, y)
-            }          
-          p5.endShape();
-          if(props.volHistory.length > props.width) {
-            let volHistory = props.volHistory
-            volHistory.splice(0, 1);
-            props.setVolHistory(volHistory)
-          }
+          drawCircle(p5, vol, props.volHistory, props.width, props.height, props.setVolHistory);          
         }              
-        // p5.ellipse(100, 100, vol * 50);
       }}
       doubleClicked={(p5) => {
         p5.resizeCanvas(props.width, props.height)
