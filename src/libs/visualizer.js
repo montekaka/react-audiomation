@@ -1,25 +1,48 @@
-import p5 from 'p5';
-let song;
+const Visualizer = {}
 
-const preload = () => {
-  const url = 'http://download.randgad.com/shows/2019.10.12_RandGad_ep477.mp3';
-  song = loadSound(url)
+Visualizer.drawWave = (p5, vol, volHistory, width, height, setVolHistory) => {
+  p5.angleMode(p5.RADIUS)  
+  p5.stroke(123)
+  //p5.strokeWeight(2)
+  volHistory.push(vol);
+  p5.noFill();
+  p5.beginShape();  
+  for (var i = 0; i < volHistory.length; i++) {          
+    let y = p5.map(volHistory[i], 0, 1, height, 0) - height * 0.3;
+    p5.vertex(i, y)
+  }          
+  p5.endShape();
+  //setVolHistory([...volHistory, vol])
+  if(volHistory.length > width) {    
+    volHistory.splice(0, 1);    
+  }
+  setVolHistory(volHistory);
 }
 
+Visualizer.drawCircle = (p5, vol, volHistory, width, height, setVolHistory) => {
+  
+  p5.angleMode(p5.DEGREES)
+  //setVolHistory([...volHistory, vol])
+  volHistory.push(vol);
+  setVolHistory(volHistory)
+  p5.stroke(123)
+  //p5.strokeWeight(0.1)
+  p5.noFill();
+  p5.translate(width/2, height/2);
+  
+  p5.beginShape();       
+  for (var i = 0; i < 360; i++) {          
+    let vol_i = volHistory[i] ? volHistory[i] : 0;
+    let r = p5.map(vol_i, 0, 1, Math.min(width, height) * 0.1, Math.min(width, height));            
+    let x = r * p5.cos(i);
+    let y = r * p5.sin(i);
+    p5.vertex(x, y)
+  }          
+  p5.endShape();
 
-class Visualizer {
-  constructor(audio) {
-    this.audio = audio;
-    this.fromTime = 0;
-    this.endTime = 0;
-    this.x = 0;
-    this.y = 0;    
-    this.width = 0;
-    this.height = 0;
-  }
-
-  play() {
-
+  if(volHistory.length > 360) {
+    volHistory.splice(0, 1);
+    setVolHistory(volHistory)
   }
 }
 
