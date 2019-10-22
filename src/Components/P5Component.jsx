@@ -4,6 +4,7 @@ import Sketch from 'react-p5'
 import p5 from "p5";
 import "p5/lib/addons/p5.sound";
 import Visualize from '../libs/visualizer'
+import SketchBox from './SketchBox';
 
 const AddFile = (props) => {
   const [buttonLabel, setButtonLabel] = useState('Add')
@@ -48,30 +49,6 @@ const AddFile = (props) => {
         {playButtonLabel}
       </div>
     </div>
-  )
-}
-
-const Box = (props) => {
-  return (
-    <Sketch 
-      setup={(p5, canvasParentRef) => {
-        p5.createCanvas(props.width, props.height).parent(canvasParentRef)
-        p5.background(220, 141, 155, 60);                    
-      }}
-      draw={(p5) => {        
-        if(Object.keys(props.amp).length > 0 && props.amp.getLevel() > 0) {
-          p5.clear()          
-          p5.background(220, 141, 155, 60);
-          let vol = props.amp.getLevel();          
-          //Visualize.drawWave(p5, vol, props.volHistory, props.width, props.height, props.setVolHistory);          
-          Visualize.drawCircle(p5, vol, props.volHistory, props.width, props.height, props.setVolHistory);          
-        }              
-      }}
-      doubleClicked={(p5) => {
-        p5.resizeCanvas(props.width, props.height)
-        p5.background(220, 141, 155, 60);
-      }}
-    />
   )
 }
 
@@ -121,13 +98,14 @@ const P5Component = () => {
           style={{backgroundColor: 'rgba(52, 52, 52, 0.3)'}}
           //style={{borderStyle: 'solid'}}
         >
-          <Box width={canvas.width} 
+          <SketchBox width={canvas.width} 
             height={canvas.height} 
             x={canvas.x} 
             y={canvas.y}
             amp={amp}
             volHistory={volHistory}
             setVolHistory={setVolHistory}
+            visualize={Visualize.drawCircle}
           />
         </Rnd>       
       </div>
