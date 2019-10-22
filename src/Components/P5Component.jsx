@@ -3,53 +3,7 @@ import {Rnd} from 'react-rnd';
 import Sketch from 'react-p5'
 import p5 from "p5";
 import "p5/lib/addons/p5.sound";
-
-
-const drawWave = (p5, vol, volHistory, width, height, setVolHistory) => {
-  p5.angleMode(p5.RADIUS)
-  setVolHistory([...volHistory, vol])
-  p5.stroke('blue')
-  p5.strokeWeight(2)
-  p5.noFill();          
-  p5.beginShape();                  
-  for (var i = 0; i < volHistory.length; i++) {          
-    let y = p5.map(volHistory[i], 0, 1, height, 0)         
-    p5.vertex(i, y)
-  }          
-  p5.endShape();
-
-  if(volHistory.length > width) {
-    volHistory.splice(0, 1);
-    setVolHistory(volHistory)
-  }
-}
-
-const drawCircle = (p5, vol, volHistory, width, height, setVolHistory) => {
-  p5.angleMode(p5.DEGREES)
-  setVolHistory([...volHistory, vol])
-  p5.stroke('blue')
-  //p5.strokeWeight(0.1)
-  p5.noFill();
-  p5.translate(width/2, height/2);
-  
-  p5.beginShape();       
-  for (var i = 0; i < 360; i++) {          
-    // let y = p5.map(volHistory[i], 0, 1, height, 0)
-    // p5.vertex(i, y)
-    let r = p5.map(volHistory[i], 0, 1, Math.min(width, height) * 0.1, Math.min(width, height));
-
-    let x = r * p5.cos(i);
-    let y = r * p5.sin(i);
-    p5.vertex(x, y)
-  }          
-  p5.endShape();
-
-  if(volHistory.length > 360) {
-    volHistory.splice(0, 1);
-    setVolHistory(volHistory)
-  }
-}
-
+import Visualize from '../libs/visualizer'
 
 const AddFile = (props) => {
   const [buttonLabel, setButtonLabel] = useState('Add')
@@ -101,17 +55,21 @@ const Box = (props) => {
   return (
     <Sketch 
       setup={(p5, canvasParentRef) => {
-        p5.createCanvas(props.width, props.height).parent(canvasParentRef)        
+        p5.createCanvas(props.width, props.height).parent(canvasParentRef)
+        p5.background(220, 141, 155, 60);                    
       }}
-      draw={(p5) => {
-        p5.background(0);    
+      draw={(p5) => {        
         if(Object.keys(props.amp).length > 0 && props.amp.getLevel() > 0) {
+          p5.clear()          
+          p5.background(220, 141, 155, 60);
           let vol = props.amp.getLevel();          
-          drawCircle(p5, vol, props.volHistory, props.width, props.height, props.setVolHistory);          
+          //Visualize.drawWave(p5, vol, props.volHistory, props.width, props.height, props.setVolHistory);          
+          Visualize.drawCircle(p5, vol, props.volHistory, props.width, props.height, props.setVolHistory);          
         }              
       }}
       doubleClicked={(p5) => {
         p5.resizeCanvas(props.width, props.height)
+        p5.background(220, 141, 155, 60);
       }}
     />
   )
@@ -121,7 +79,7 @@ const Box = (props) => {
 const P5Component = () => {
   const url = '/tmp/demo.mp3'
 
-  const [canvas, setCanvas] = useState({x: 100, y: 300, width: 200, height: 200})
+  const [canvas, setCanvas] = useState({x: 100, y: 100, width: 100, height: 60})
   const [song, setSong] = useState({});
   const [volHistory, setVolHistory] = useState([]);
   const [amp, setAmp] = useState([]);
@@ -143,7 +101,9 @@ const P5Component = () => {
 
   return (
     <div>
-      <div className="video-frame">  
+      <div className="video-frame" 
+        style={{"height": "400px", "width": "400px", "backgroundColor": "blanchedalmond"}}
+      >  
         <Rnd 
           default={{
             x: canvas.x,
@@ -158,7 +118,8 @@ const P5Component = () => {
             reiszeHander(e, direction, ref, delta, position)
           }}
           bounds="parent"
-          style={{backgroundColor: 'white'}}
+          style={{backgroundColor: 'rgba(52, 52, 52, 0.3)'}}
+          //style={{borderStyle: 'solid'}}
         >
           <Box width={canvas.width} 
             height={canvas.height} 
