@@ -13,7 +13,7 @@ const MediaControl = (props) => {
       props.setSong(song);
       setButtonLabel('Added')
       let amp = new p5.Amplitude();
-      props.setAmp(amp);      
+      props.setAmp(amp);
     }, () => {
 
     }, (a) => {
