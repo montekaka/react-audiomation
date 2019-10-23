@@ -1,56 +1,10 @@
 import React, {useState, useEffect} from 'react'
 import {Rnd} from 'react-rnd';
-import Sketch from 'react-p5'
 import p5 from "p5";
 import "p5/lib/addons/p5.sound";
 import Visualize from '../libs/visualizer'
 import SketchBox from './SketchBox';
-
-const AddFile = (props) => {
-  const [buttonLabel, setButtonLabel] = useState('Add')
-  const [playButtonLabel, setPlayButtonLabel] = useState('Pause')
-
-  const handleClick = () => {
-    const song = new p5.SoundFile(props.url, () => {
-      console.log('loaded')      
-      song.play();
-      props.setSong(song);
-      setButtonLabel('Added')
-      let amp = new p5.Amplitude();
-      props.setAmp(amp);      
-    }, () => {
-
-    }, (a) => {
-      // TODO: show loading percentage
-      console.log(a)
-    }); 
-  }
-
-  const handleToggleClick = () => {
-    if(props.song.isPlaying()) {
-      console.log('puase')
-      props.song.pause();
-      setPlayButtonLabel('Play')
-    } else {
-      console.log('Play')
-      props.song.play();
-      setPlayButtonLabel('Pause')
-    }    
-  }
-
-  return (
-    <div>
-      <div onClick={() => {
-        handleClick();
-      }}>{buttonLabel}</div>
-      <div onClick={() => {
-        handleToggleClick();
-      }}>
-        {playButtonLabel}
-      </div>
-    </div>
-  )
-}
+import MediaControl from './MediaControl'
 
 // TODO: show rulers
 const P5Component = () => {
@@ -96,7 +50,7 @@ const P5Component = () => {
           }}
           bounds="parent"
           style={{backgroundColor: 'rgba(52, 52, 52, 0.3)'}}
-          //style={{borderStyle: 'solid'}}
+          //style={{borderStyle: 'solid'}}  
         >
           <SketchBox width={canvas.width} 
             height={canvas.height} 
@@ -109,7 +63,7 @@ const P5Component = () => {
           />
         </Rnd>       
       </div>
-      <AddFile 
+      <MediaControl 
         url={url}
         setAmp={setAmp}
         song={song}
