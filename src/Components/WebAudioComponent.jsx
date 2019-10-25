@@ -1,20 +1,22 @@
 import React, {useState, useEffect, useRef} from 'react'
 import {Rnd} from 'react-rnd';
 import q5 from './../libs/q5'
+import { userInfo } from 'os';
 
 const WebAudioComponent = () => {
   const url = '/tmp/demo.mp3'
     
   const [dndArea, setDndArea] = useState({x: 100, y: 100, width: 100, height: 60})
   const [song, setSong] = useState(null);
-  const [volHistory, setVolHistory] = useState([]);
+  //const [volHistory, setVolHistory] = useState([]);
 
   const audioCtx = useRef(new AudioContext());
-  const analyser = useRef(audioCtx.current.createAnalyser());
+  const analyser = useRef(audioCtx.current.createAnalyser());  
   const dataArray = useRef();
   const source = useRef();
   const canvas = useRef(null);
   const canvasCtx = useRef();
+  const volHistory = useRef([]);
 
   // setup canvas
   useEffect(() => {
@@ -26,14 +28,14 @@ const WebAudioComponent = () => {
     .then((decodedData) => {
       source.current = audioCtx.current.createBufferSource();
       source.current.buffer = decodedData;
-      source.current.connect(analyser.current)
-      analyser.current.connect(audioCtx.current.destination)      
+      source.current.connect(analyser.current);
+      analyser.current.connect(audioCtx.current.destination);
       return;
     })
     .then(() => {
       q5.play(source.current, analyser.current, dataArray, 0, () => {
         //console.log('hello')
-        q5.drawWaveForm(analyser.current, dataArray.current, canvasCtx.current, dndArea.width, dndArea.height)
+        q5.drawCircle(analyser.current, dataArray.current, canvasCtx.current, dndArea.width, dndArea.height, volHistory)
       })
     })
     .catch((err) => {
