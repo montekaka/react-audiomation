@@ -39,11 +39,11 @@ q5.loadSound = (audioCtx, url) => {
 q5.play = (source, analyser, dataArray, fromTime, drawcb) => {
   analyser.minDecibels = -90;
   analyser.maxDecibels  = -10;
-  analyser.smoothingTimeConstant = 0.85;
+  analyser.smoothingTimeConstant = 0.6;
   analyser.fftSize = 256;
   dataArray.current = new Uint8Array(analyser.frequencyBinCount);
   source.start(fromTime);
-  
+
   setInterval(() => {
     requestAnimationFrame(drawcb);
   }, 1000/40)
@@ -70,7 +70,6 @@ q5.drawWaveForm = (analyser, dataArray, canvasCtx, width, height, volHistory) =>
 }
 
 q5.drawCircle = (analyser, dataArray, canvasCtx, width, height, volHistory) => {  
-  
   
   analyser.getByteFrequencyData(dataArray);
 
