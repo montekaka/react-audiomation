@@ -116,29 +116,7 @@ q5.drawWave = (analyser, dataArray, canvasCtx, width, height, volHistory) => {
     let y = _map(vol_i, 0, 255, height, height * 0.1 )
     canvasCtx.lineTo(i, y)
   }
-
-
 }
-
 
 export default q5;
 
-
-// Visualizer.drawWave = (p5, vol, volHistory, width, height, setVolHistory) => {
-//   p5.angleMode(p5.RADIUS)  
-//   p5.stroke(123)
-//   p5.strokeWeight(2)
-//   volHistory.push(vol);
-//   p5.noFill();
-//   p5.beginShape();  
-//   for (var i = 0; i < volHistory.length; i++) {          
-//     let y = p5.map(volHistory[i], 0, 1, height, 0) - height * 0.3;
-//     p5.vertex(i, y)
-//   }          
-//   p5.endShape();
-//   //setVolHistory([...volHistory, vol])
-//   if(volHistory.length > width) {    
-//     volHistory.splice(0, 1);    
-//   }
-//   setVolHistory(volHistory);
-// }
