@@ -39,7 +39,7 @@ q5.loadSound = (audioCtx, url) => {
 q5.play = (source, analyser, dataArray, fromTime, drawcb) => {
   analyser.minDecibels = -90;
   analyser.maxDecibels  = -10;
-  analyser.smoothingTimeConstant = 0.6;
+  analyser.smoothingTimeConstant = 0.55;
   analyser.fftSize = 256;
   dataArray.current = new Uint8Array(analyser.frequencyBinCount);
   source.start(fromTime);
@@ -49,7 +49,7 @@ q5.play = (source, analyser, dataArray, fromTime, drawcb) => {
   }, 1000/40)
 }
 
-q5.drawWaveForm = (analyser, dataArray, canvasCtx, width, height, volHistory) => {
+q5.drawBar = (analyser, dataArray, canvasCtx, width, height, volHistory) => {
   const bufferLength = analyser.frequencyBinCount;
 
   analyser.getByteFrequencyData(dataArray);
@@ -61,7 +61,6 @@ q5.drawWaveForm = (analyser, dataArray, canvasCtx, width, height, volHistory) =>
   let x = 0;
   for (let i = 0; i < bufferLength; i++) {
     barHeight = calcBarHeight(dataArray[i], height);
-    //console.log(_height - barHeight)
     canvasCtx.fillStyle = "rgb(255, 87, 51)";
     canvasCtx.fillRect(x, height-barHeight, barWidth, barHeight);
 
@@ -80,20 +79,13 @@ q5.drawCircle = (analyser, dataArray, canvasCtx, width, height, volHistory) => {
     volHistory.current.splice(0, 1)
   }
 
-  canvasCtx.clearRect(0, 0, width, height);  
+  canvasCtx.clearRect(0, 0, width, height);
   canvasCtx.strokeStyle = "#003300";
   canvasCtx.stroke();
-
-  //console.log(volHistory.current.length)
-  // analyser.getByteFrequencyData(dataArray);
-  // canvasCtx.clearRect(0, 0, width, height);
   
-
   canvasCtx.beginPath()
-  //canvasCtx.moveTo(width/2, height/2);
+
   let a = ((Math.PI * 2)/365);
-  //canvasCtx.translate(width/2, height/2)
-  //canvasCtx.moveTo(0,0);
 
   for(let i = 0; i < volHistory.current.length; i++) {    
     let vol_i = volHistory.current[i];
@@ -104,38 +96,49 @@ q5.drawCircle = (analyser, dataArray, canvasCtx, width, height, volHistory) => {
     let y = r * Math.sin(a*i) + height / 2 ;
     canvasCtx.lineTo(x, y)
   }
-  //canvasCtx.arc(width/2, height/2, vol, 0, 2 * Math.PI, false)
-  //canvasCtx.closePath()
-    
 }
+
+
+q5.drawWave = (analyser, dataArray, canvasCtx, width, height, volHistory) => {
+  analyser.getByteFrequencyData(dataArray);
+  const vol = getAverageVolume(dataArray);
+  volHistory.current.push(vol);
+  if(volHistory.current.length > width) {
+    volHistory.current.splice(0, 1)
+  }
+  canvasCtx.clearRect(0, 0, width, height);
+  canvasCtx.strokeStyle = "#003300";
+  canvasCtx.stroke();
+
+  canvasCtx.beginPath()
+  for(let i = 0; i < volHistory.current.length; i++) {
+    let vol_i = volHistory.current[i];
+    let y = _map(vol_i, 0, 255, height, height * 0.1 )
+    canvasCtx.lineTo(i, y)
+  }
+
+
+}
+
 
 export default q5;
 
 
-
-// Visualizer.drawCircle = (p5, vol, volHistory, width, height, setVolHistory) => {
-  
-//   p5.angleMode(p5.DEGREES)
-//   //setVolHistory([...volHistory, vol])
-//   volHistory.push(vol);
-//   setVolHistory(volHistory)
+// Visualizer.drawWave = (p5, vol, volHistory, width, height, setVolHistory) => {
+//   p5.angleMode(p5.RADIUS)  
 //   p5.stroke(123)
 //   p5.strokeWeight(2)
+//   volHistory.push(vol);
 //   p5.noFill();
-//   p5.translate(width/2, height/2);
-  
-//   p5.beginShape();       
-//   for (var i = 0; i < 360; i++) {          
-//     let vol_i = volHistory[i] ? volHistory[i] : 0;
-//     let r = p5.map(vol_i, 0, 1, Math.min(width, height) * 0.1, Math.min(width, height));            
-//     let x = r * p5.cos(i);
-//     let y = r * p5.sin(i);
-//     p5.vertex(x, y)
+//   p5.beginShape();  
+//   for (var i = 0; i < volHistory.length; i++) {          
+//     let y = p5.map(volHistory[i], 0, 1, height, 0) - height * 0.3;
+//     p5.vertex(i, y)
 //   }          
 //   p5.endShape();
-
-//   if(volHistory.length > 360) {
-//     volHistory.splice(0, 1);
-//     setVolHistory(volHistory)
+//   //setVolHistory([...volHistory, vol])
+//   if(volHistory.length > width) {    
+//     volHistory.splice(0, 1);    
 //   }
+//   setVolHistory(volHistory);
 // }

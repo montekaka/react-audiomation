@@ -35,7 +35,7 @@ const WebAudioComponent = () => {
     .then(() => {
       q5.play(source.current, analyser.current, dataArray, 0, () => {
         //console.log('hello')
-        q5.drawCircle(analyser.current, dataArray.current, canvasCtx.current, dndArea.width, dndArea.height, volHistory)
+        q5.drawWave(analyser.current, dataArray.current, canvasCtx.current, dndArea.width, dndArea.height, volHistory)
       })
     })
     .catch((err) => {
