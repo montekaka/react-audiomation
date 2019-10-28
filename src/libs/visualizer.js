@@ -3,7 +3,7 @@ const Visualizer = {}
 Visualizer.drawWave = (p5, vol, volHistory, width, height, setVolHistory) => {
   p5.angleMode(p5.RADIUS)  
   p5.stroke(123)
-  //p5.strokeWeight(2)
+  p5.strokeWeight(2)
   volHistory.push(vol);
   p5.noFill();
   p5.beginShape();  
@@ -26,7 +26,7 @@ Visualizer.drawCircle = (p5, vol, volHistory, width, height, setVolHistory) => {
   volHistory.push(vol);
   setVolHistory(volHistory)
   p5.stroke(123)
-  //p5.strokeWeight(0.1)
+  p5.strokeWeight(2)
   p5.noFill();
   p5.translate(width/2, height/2);
   

@@ -16,7 +16,11 @@ const WebAudioComponent = () => {
   const source = useRef();
   const canvas = useRef(null);
   const canvasCtx = useRef();
+<<<<<<< HEAD
   const volHistory = useRef[]
+=======
+  const volHistory = useRef([]);
+>>>>>>> refactor/WebAudioAPI
 
   // setup canvas
   useEffect(() => {
@@ -35,7 +39,11 @@ const WebAudioComponent = () => {
     .then(() => {
       q5.play(source.current, analyser.current, dataArray, 0, () => {
         //console.log('hello')
+<<<<<<< HEAD
         q5.drawCircle(analyser.current, dataArray.current, canvasCtx.current, dndArea.width, dndArea.height)
+=======
+        q5.drawWave(analyser.current, dataArray.current, canvasCtx.current, dndArea.width, dndArea.height, volHistory)
+>>>>>>> refactor/WebAudioAPI
       })
     })
     .catch((err) => {
