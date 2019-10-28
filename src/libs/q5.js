@@ -113,7 +113,7 @@ q5.drawWave = (analyser, dataArray, canvasCtx, width, height, volHistory) => {
   canvasCtx.beginPath()
   for(let i = 0; i < volHistory.current.length; i++) {
     let vol_i = volHistory.current[i];
-    let y = _map(vol_i, 0, 255, height, height * 0.1 )
+    let y = _map(vol_i, 0, 255, height, 0 )
     canvasCtx.lineTo(i, y)
   }
 }
